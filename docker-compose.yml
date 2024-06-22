@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - my-network
+
+  pgadmin:
+    depends_on:
+      - postgres
+    image: dpage/pgadmin4
+    env_file:
+      - .env
+    ports:
+      - ${PGADMIN_PORT}:${PGADMIN_PORT}
+    restart: always
+    networks:
+      - my-network
+
+  backend:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

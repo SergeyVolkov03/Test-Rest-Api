@@ -1,0 +1,21 @@
+{
+  "name": "test-rest-api",
+  "version": "1.0.0",
+  "description": "REST API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "start:dev": "nodemon index.js"
+  },
+  "author": "Sergey Volkov",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.4"
+  },
+  "devDependencies": {
+    "prisma": "^5.15.1"
+  }
+}
