@@ -12,18 +12,8 @@ services:
       - .env
     networks:
       - my-network
-
-  pgadmin:
-    depends_on:
-      - postgres
-    image: dpage/pgadmin4
-    env_file:
-      - .env
-    ports:
-      - ${PGADMIN_PORT}:${PGADMIN_PORT}
-    restart: always
-    networks:
-      - my-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   backend:
     depends_on:
