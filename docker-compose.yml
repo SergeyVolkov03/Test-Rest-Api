@@ -29,6 +29,9 @@ services:
     networks:
       - my-network
 
+volumes:
+  postgres-data:
+
 networks:
   my-network:
     driver: bridge
