@@ -3,4 +3,5 @@ WORKDIR /app
 COPY package.json .
 RUN npm install
 COPY /src .
-CMD ["node", "index.js"]
+COPY prisma ./prisma/
+CMD sh -c "npx prisma migrate dev --name init && npm run start"
