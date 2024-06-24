@@ -7,7 +7,7 @@ import {
 
 const router = express.Router();
 
-export default router.post('/register', async (req, res, next) => {
+router.post('/register', async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -30,3 +30,33 @@ export default router.post('/register', async (req, res, next) => {
     next(err);
   }
 });
+
+router.post('/login', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400);
+      throw new Error('You must provide an email and a password.');
+    }
+
+    const existingUser = await findUserByEmail(email);
+
+    if (!existingUser) {
+      res.status(403);
+      throw new Error('Invalid login credentials.');
+    }
+
+    if (existingUser.password !== password) {
+      res.status(403);
+      throw new Error('Invalid login credentials.');
+    }
+
+    const accessToken = generateAccessToken(existingUser);
+
+    res.json({ accessToken });
+  } catch (err) {
+    next(err);
+  }
+});
+
+export default router;
