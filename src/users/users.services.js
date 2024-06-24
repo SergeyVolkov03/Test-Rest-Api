@@ -15,9 +15,9 @@ export function findUserById(id) {
 }
 
 export function findUserByEmail(email) {
-    return db.user.findUnique({
-      where: {
-        email,
-      },
-    });
-  }
+  return db.user.findUnique({
+    where: {
+      email,
+    },
+  });
+}
