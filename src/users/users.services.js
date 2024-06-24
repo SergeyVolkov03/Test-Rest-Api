@@ -1,4 +1,4 @@
-import { db } from '../../utils/db';
+import { db } from '../utils/db.js';
 
 export function createUserByEmailAndPassword(user) {
   return db.user.create({

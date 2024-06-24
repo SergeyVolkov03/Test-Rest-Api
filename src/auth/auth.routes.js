@@ -1,13 +1,13 @@
 import express from 'express';
-import generateAccessToken from '../utils/jwt';
+import { generateAccessToken } from '../utils/jwt.js';
 import {
   findUserByEmail,
   createUserByEmailAndPassword,
-} from '../users/users.services';
+} from '../users/users.services.js';
 
 const router = express.Router();
 
-router.post('/register', async (req, res, next) => {
+export default router.post('/register', async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
