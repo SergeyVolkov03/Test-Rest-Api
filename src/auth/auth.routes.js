@@ -4,6 +4,7 @@ import {
   findUserByEmail,
   createUserByEmailAndPassword,
 } from '../users/users.services.js';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
@@ -46,7 +47,12 @@ router.post('/login', async (req, res, next) => {
       throw new Error('Invalid login credentials.');
     }
 
-    if (existingUser.password !== password) {
+    const isValidPassword = await bcrypt.compare(
+      password,
+      existingUser.password,
+    );
+    
+    if (!isValidPassword) {
       res.status(403);
       throw new Error('Invalid login credentials.');
     }

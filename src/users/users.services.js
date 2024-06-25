@@ -1,6 +1,8 @@
 import { db } from '../utils/db.js';
+import bcrypt from 'bcrypt';
 
 export function createUserByEmailAndPassword(user) {
+  user.password = bcrypt.hashSync(user.password, 10);
   return db.user.create({
     data: user,
   });
