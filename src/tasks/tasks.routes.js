@@ -1,18 +1,18 @@
 import express from 'express';
-import { isAuthenticated } from "../middlewares/auth.middlewares.js";
-import { findUserById } from "../users/users.services.js"
+import { isAuthenticated } from '../middlewares/auth.middlewares.js';
+import { createTodo } from './tasks.services.js';
 
 const router = express.Router();
 
-router.get('/', isAuthenticated, async (req, res, next) => {
+router.post('/', isAuthenticated, async (req, res, next) => {
   try {
+    const data = req.body;
     const { userId } = req.payload;
-    const user = await findUserById(userId);
-    delete user.password;
-    res.json(user);
+    const todo = await createTodo(data, userId);
+    res.json(todo);
   } catch (err) {
     next(err);
   }
 });
 
-export default router
+export default router;

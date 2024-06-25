@@ -5,7 +5,7 @@ export function isAuthenticated(req, res, next) {
 
   if (!authorization) {
     res.status(401);
-    res.send({error: 'Un-authorized'})
+    res.send({ error: 'Un-authorized' });
   }
 
   try {
@@ -15,9 +15,9 @@ export function isAuthenticated(req, res, next) {
   } catch (err) {
     res.status(401);
     if (err.name === 'TokenExpiredError') {
-      res.send({error: err.name})
+      res.send({ error: err.name });
     }
-    res.send({error: 'Un-authorized'})
+    res.send({ error: 'Un-authorized' });
   }
 
   return next();
