@@ -5,17 +5,13 @@ import {
   createUserByEmailAndPassword,
 } from '../users/users.services.js';
 import bcrypt from 'bcrypt';
-import { body } from 'express-validator';
 import { inputValidationMiddleware } from '../middlewares/validation.middleware.js';
+import {
+  emailValidation,
+  passwordValidation,
+} from '../validation/validation.js';
 
 const router = express.Router();
-
-const emailValidation = body('email').isEmail().withMessage('Invalid email');
-const passwordValidation = body('password')
-  .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)
-  .withMessage(
-    'Password must have at least 1 figure, 1 upper case letter, 1 lower case letter and minimum length 6 characters',
-  );
 
 router.post(
   '/register',
