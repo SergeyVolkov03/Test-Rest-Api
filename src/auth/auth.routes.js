@@ -5,64 +5,77 @@ import {
   createUserByEmailAndPassword,
 } from '../users/users.services.js';
 import bcrypt from 'bcrypt';
+import { body } from 'express-validator';
+import { inputValidationMiddleware } from '../middlewares/validation.middleware.js';
 
 const router = express.Router();
 
-router.post('/register', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400);
-      res.send({ error: 'You must provide an email and a password.' });
+const emailValidation = body('email').isEmail().withMessage('Invalid email');
+const passwordValidation = body('password')
+  .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/)
+  .withMessage(
+    'Password must have at least 1 figure, 1 upper case letter, 1 lower case letter and minimum length 6 characters',
+  );
+
+router.post(
+  '/register',
+  emailValidation,
+  passwordValidation,
+  inputValidationMiddleware,
+  async (req, res, next) => {
+    try {
+      const { email, password } = req.body;
+
+      const existingUser = await findUserByEmail(email);
+
+      if (existingUser) {
+        res.status(400);
+        res.send({ error: 'Email already in use' });
+      }
+
+      const user = await createUserByEmailAndPassword({ email, password });
+      const accessToken = generateAccessToken(user);
+
+      res.json({ accessToken });
+    } catch (err) {
+      next(err);
     }
+  },
+);
 
-    const existingUser = await findUserByEmail(email);
+router.post(
+  '/login',
+  emailValidation,
+  passwordValidation,
+  inputValidationMiddleware,
+  async (req, res, next) => {
+    try {
+      const { email, password } = req.body;
 
-    if (existingUser) {
-      res.status(400);
-      res.send({ error: 'Email already in use' });
+      const existingUser = await findUserByEmail(email);
+
+      if (!existingUser) {
+        res.status(403);
+        res.send({ error: 'Invalid login credentials' });
+      }
+
+      const isValidPassword = await bcrypt.compare(
+        password,
+        existingUser.password,
+      );
+
+      if (!isValidPassword) {
+        res.status(403);
+        res.send({ error: 'Invalid login credentials' });
+      }
+
+      const accessToken = generateAccessToken(existingUser);
+
+      res.json({ accessToken });
+    } catch (err) {
+      next(err);
     }
-
-    const user = await createUserByEmailAndPassword({ email, password });
-    const accessToken = generateAccessToken(user);
-
-    res.json({ accessToken });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/login', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400);
-      res.send({ error: 'You must provide an email and a password' });
-    }
-
-    const existingUser = await findUserByEmail(email);
-
-    if (!existingUser) {
-      res.status(403);
-      res.send({ error: 'Invalid login credentials' });
-    }
-
-    const isValidPassword = await bcrypt.compare(
-      password,
-      existingUser.password,
-    );
-
-    if (!isValidPassword) {
-      res.status(403);
-      res.send({ error: 'Invalid login credentials' });
-    }
-
-    const accessToken = generateAccessToken(existingUser);
-
-    res.json({ accessToken });
-  } catch (err) {
-    next(err);
-  }
-});
+  },
+);
 
 export default router;
