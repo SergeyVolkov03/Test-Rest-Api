@@ -1,5 +1,5 @@
 {
-  "name": "test-rest-api",
+  "name": "todo-rest-api",
   "version": "1.0.0",
   "description": "REST API",
   "main": "index.js",
